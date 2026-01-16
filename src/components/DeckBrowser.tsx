@@ -2,11 +2,28 @@
 
 import { mockDecks, mockSubjects } from "@/mock/data"
 import { FullDeckDto } from "@/shared/types"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Card from "./Card"
+import Sidebar from "./Sidebar"
+
 
 export default function () {
     const [decks, setDecks] = useState<FullDeckDto[]>(mockDecks)
+    const [search, setSearch] = useState("");
+    const [subjectId, setSubjectId] = useState<number | null>(null);
+
+    useEffect(() => {
+        // console.log(search)
+        let data = mockDecks;
+        if (search.trim()) {
+            data = data.filter((d) => d.name.toLowerCase().includes(search.toLowerCase()))
+        }
+        if (subjectId) {
+            data = data.filter((d) => d.subject.id === subjectId)
+            //setSubjectId(null)
+        }
+        setDecks(data)
+    }, [search, subjectId])
 
     return (
         <div className="mx-auto max-w-7xl p-4">
@@ -14,6 +31,7 @@ export default function () {
                 {/* <p>Komponenta DeckBrowser je ovde</p> */}
 
                 {/* Sidebar */}
+                <Sidebar search={search} setSearch={setSearch} subjects={mockSubjects} setSubjectId={setSubjectId} />
 
                 {/* Cards */}
                 <section className="flex-1">
